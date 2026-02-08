@@ -1,4 +1,5 @@
 import { Logo } from "./components/logo"
+import { SearchInput } from "./components/search-input"
 import { UnitsConverter } from "./components/units-converter"
 
 function App() {
@@ -9,12 +10,15 @@ function App() {
         <Logo />
         <UnitsConverter />
       </div>
+      <h1 className="text-2xl font-bold text-center mb-4">
+      How's the sky looking today?
+      </h1>
+
+      <SearchInput />
       
 
-      How's the sky looking today?
 
-      Search for a city, e.g., New York
-      Search
+     
 
       Feels like
       {/* Insert temperature here */}
