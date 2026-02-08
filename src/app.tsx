@@ -1,11 +1,12 @@
 import { Logo } from "./components/logo"
 import { SearchInput } from "./components/search-input"
 import { UnitsConverter } from "./components/units-converter"
+import Provider from "./components/provider"
+
 
 function App() {
   return (
-    <>
-      
+    <Provider>
       <div className="flex items-center justify-between p-4">
         <Logo />
         <UnitsConverter />
@@ -51,7 +52,7 @@ function App() {
         <a href="#">Your Name Here</a>
         .
       </div>
-    </>
+    </Provider>
 
   )
 }
