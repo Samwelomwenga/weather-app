@@ -1,27 +1,15 @@
 import { Logo } from "./components/logo"
+import { UnitsConverter } from "./components/units-converter"
 
 function App() {
   return (
     <>
-      <Logo />
-      Units
-
-      Switch to Imperial/Metric
-
-      Temperature
-
-      Celsius (°C)
-      Fahrenheit (°F)
-
-      Wind Speed
-
-      km/h
-      mph
-
-      Precipitation
-
-      Millimeters (mm)
-      Inches (in)
+      
+      <div className="flex items-center justify-between p-4">
+        <Logo />
+        <UnitsConverter />
+      </div>
+      
 
       How's the sky looking today?
 
