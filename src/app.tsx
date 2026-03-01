@@ -1,3 +1,4 @@
+import { HourlyForecast } from "./components/hourly-forecast"
 import { Logo } from "./components/logo"
 import { SearchInput } from "./components/search-input"
 import { UnitsConverter } from "./components/units-converter"
@@ -16,6 +17,7 @@ function App() {
       </h1>
 
       <SearchInput />
+      <HourlyForecast />
       
 
 
