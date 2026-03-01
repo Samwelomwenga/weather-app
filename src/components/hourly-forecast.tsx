@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import {
   Card,
@@ -15,15 +16,21 @@ import iconDropdown from "@/assets/images/icon-dropdown.svg";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { useFetchWeatherForecast } from "@/hooks/use-weather-forecast";
+import { useGeolocation } from "@/hooks/use-geolocation";
 
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export function HourlyForecast() {
-  const { data } = useFetchWeatherForecast({
-    latitude: 52.52,
-    longitude: 13.41,
-    hourly: "temperature_2m",
-  });
+  const { data: coords } = useGeolocation();
+
+  const { data } = useFetchWeatherForecast(
+    {
+      latitude: coords?.latitude ?? 0,
+      longitude: coords?.longitude ?? 0,
+      hourly: "temperature_2m",
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    },
+  );
 
   const [selectedDay, setSelectedDay] = useState<string>(daysOfWeek[0]);
 
