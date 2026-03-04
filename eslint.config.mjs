@@ -10,6 +10,7 @@ export default antfu({
   },
 }, {
   rules: {
+    "@typescript-eslint/no-floating-promises": "error",
     "no-console": ["warn"],
     "node/prefer-global/process": ["off"],
     "node/no-process-env": ["error"],
