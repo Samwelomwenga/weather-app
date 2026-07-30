@@ -2,6 +2,12 @@
 import antfu from "@antfu/eslint-config"
 
 export default antfu({
+  ignores: [
+    ".agents/**",
+    ".claude/**",
+    ".codex/**",
+    "skills-lock.json",
+  ],
   react: true,
   formatters: true,
   stylistic: {

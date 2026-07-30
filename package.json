@@ -52,6 +52,6 @@
     "vite": "^7.2.4"
   },
   "lint-staged": {
-    "*": "pnpm lint"
+    "*.{js,jsx,ts,tsx,cjs,mjs,json,jsonc,css,md}": "eslint --fix --no-warn-ignored"
   }
 }
