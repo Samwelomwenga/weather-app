@@ -1,20 +1,36 @@
-import { useQuery } from "@tanstack/react-query";
-import { queryKeys } from "@/constants/query-keys";
+import { useQuery } from "@tanstack/react-query"
+import { queryKeys } from "@/constants/query-keys"
 
-export function useGeolocation() {
-  return useQuery<{ latitude: number; longitude: number }, Error>({
+interface BrowserCoordinates {
+  latitude: number
+  longitude: number
+}
+
+interface UseGeolocationOptions {
+  enabled?: boolean
+}
+
+export function useGeolocation({ enabled = true }: UseGeolocationOptions = {}) {
+  return useQuery<BrowserCoordinates, Error>({
     queryKey: queryKeys.geolocation,
-    queryFn: () =>
-      new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
+    queryFn: () => {
+      if (!navigator.geolocation) {
+        throw new Error("Browser geolocation is unavailable")
+      }
+
+      return new Promise<BrowserCoordinates>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
-          (position) =>
+          position =>
             resolve({
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
             }),
-          (error) => reject(error),
-        );
-      }),
+          error => reject(error),
+        )
+      })
+    },
+    enabled,
+    retry: false,
     staleTime: Infinity,
-  });
+  })
 }

@@ -9,8 +9,21 @@ export default antfu({
     quotes: "double",
   },
 }, {
+  files: ["**/*.{ts,tsx}"],
+  languageOptions: {
+    parserOptions: {
+      projectService: {
+        allowDefaultProject: ["./*.js"],
+        defaultProject: "tsconfig.json",
+      },
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
   rules: {
-    "@typescript-eslint/no-floating-promises": "error",
+    "ts/no-floating-promises": "error",
+  },
+}, {
+  rules: {
     "no-console": ["warn"],
     "node/prefer-global/process": ["off"],
     "node/no-process-env": ["error"],
