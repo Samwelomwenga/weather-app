@@ -105,6 +105,13 @@ export function formatForecastDay(value: string) {
   }).format(parseOpenMeteoLocalTime(value))
 }
 
+export function formatForecastShortDay(value: string) {
+  return new Intl.DateTimeFormat("en", {
+    timeZone: "UTC",
+    weekday: "short",
+  }).format(parseOpenMeteoLocalTime(value))
+}
+
 export function formatForecastHour(value: string) {
   return new Intl.DateTimeFormat("en", {
     hour: "numeric",

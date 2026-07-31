@@ -1,6 +1,7 @@
 import type { SuccessfulApiResponse } from "./types/api-response"
 import { useCallback, useState } from "react"
 import todayCardBackground from "@/assets/images/bg-today-large.svg"
+import { DailyForecast } from "./components/daily-forecast"
 import { HourlyForecast } from "./components/hourly-forecast"
 import { Logo } from "./components/logo"
 import Provider from "./components/provider"
@@ -144,6 +145,11 @@ function WeatherDashboard() {
                   <MetricGrid
                     current={current}
                     units={currentUnits}
+                  />
+
+                  <DailyForecast
+                    forecast={forecast.data}
+                    isLoading={isResolvingLocation || forecast.isLoading}
                   />
                 </div>
 
