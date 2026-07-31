@@ -1,6 +1,7 @@
 "use client"
 import type { SuccessfulApiResponse } from "@/types/api-response"
-import { useMemo, useState } from "react"
+import { parseAsString, useQueryState } from "nuqs"
+import { useMemo } from "react"
 import iconDropdown from "@/assets/images/icon-dropdown.svg"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,12 +12,13 @@ import {
 } from "@/components/ui/card"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-  formatForecastDay,
+  formatForecastDayOption,
   formatForecastHour,
   formatTemperature,
   getWeatherSummary,
@@ -29,56 +31,86 @@ type HourlyForecastProps = {
 
 type HourlyForecastRow = {
   dateKey: string
-  hour: string
+  time: string
   temperature: number
   weatherCode: number
 }
 
+type HourlyDayOption = {
+  dateKey: string
+  label: string
+}
+
 export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [selectedDate, setSelectedDate] = useQueryState(
+    "day",
+    parseAsString.withOptions({
+      clearOnDefault: false,
+      history: "replace",
+      shallow: true,
+    }),
+  )
   const hourlyRows = useMemo(() => getHourlyForecastRows(forecast), [forecast])
   const dayOptions = useMemo(
-    () => getHourlyDayOptions(hourlyRows),
-    [hourlyRows],
+    () => getHourlyDayOptions(forecast),
+    [forecast],
   )
-  const selectedDateKey = dayOptions.some(day => day.dateKey === selectedDate)
-    ? selectedDate
-    : dayOptions[0]?.dateKey
+  const selectedDateKey = dayOptions.find(
+    day => day.dateKey === selectedDate,
+  )?.dateKey ?? dayOptions[0]?.dateKey
   const selectedDayLabel = dayOptions.find(
     day => day.dateKey === selectedDateKey,
   )?.label ?? "Today"
   const visibleRows = hourlyRows
     .filter(row => row.dateKey === selectedDateKey)
-    .slice(0, 8)
-
   const unit = forecast?.hourly_units.temperature_2m ?? "°C"
 
   return (
-    <Card className="rounded-lg border-0 bg-card">
-      <CardHeader className="flex items-center justify-between">
-        <CardTitle>Hourly Forecast</CardTitle>
+    <Card
+      className="rounded-lg border-0 bg-card"
+      aria-labelledby="hourly-forecast-heading"
+    >
+      <CardHeader className="flex items-center justify-between gap-4">
+        <CardTitle id="hourly-forecast-heading">Hourly Forecast</CardTitle>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="sm" disabled={!dayOptions.length}>
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={!dayOptions.length}
+              aria-label={`Select hourly forecast day, ${selectedDayLabel} selected`}
+            >
               {selectedDayLabel}
-              <img src={iconDropdown} alt="Filter" className="w-4 h-4 ml-2" />
+              <img src={iconDropdown} alt="" className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-48">
-            {dayOptions.map(day => (
-              <DropdownMenuCheckboxItem
-                key={day.dateKey}
-                checked={day.dateKey === selectedDateKey}
-                onCheckedChange={() => setSelectedDate(day.dateKey)}
-              >
-                {day.label}
-              </DropdownMenuCheckboxItem>
-            ))}
+          <DropdownMenuContent align="end" className="w-48 rounded-lg p-2">
+            <DropdownMenuRadioGroup
+              value={selectedDateKey}
+              onValueChange={(dateKey) => {
+                void setSelectedDate(dateKey)
+              }}
+            >
+              {dayOptions.map(day => (
+                <DropdownMenuRadioItem
+                  key={day.dateKey}
+                  textValue={day.label}
+                  value={day.dateKey}
+                  className="min-h-10 rounded-lg text-base data-[state=checked]:bg-secondary"
+                >
+                  {day.label}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
       <CardContent>
-        <div className="flex max-h-[37rem] flex-col gap-3 overflow-y-auto pr-1">
+        <div
+          className="flex max-h-[37rem] flex-col gap-3 overflow-y-auto pr-1"
+          role="list"
+          aria-label={`${selectedDayLabel} hourly forecast`}
+        >
           {isLoading && (
             <p className="rounded-lg bg-secondary px-4 py-3 text-sm text-muted-foreground">
               Loading hourly forecast...
@@ -90,15 +122,18 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
 
             return (
               <div
-                key={`${row.dateKey}-${row.hour}`}
+                key={row.time}
                 className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 rounded-lg border border-border bg-secondary px-4 py-3"
+                role="listitem"
               >
                 <img
                   src={weather.icon}
                   alt={weather.description}
                   className="h-8 w-8 object-contain"
                 />
-                <span className="text-sm font-medium">{row.hour}</span>
+                <span className="text-sm font-medium">
+                  {formatForecastHour(row.time)}
+                </span>
                 <span className="text-sm font-semibold">
                   {formatTemperature(row.temperature, unit)}
                 </span>
@@ -135,7 +170,7 @@ function getHourlyForecastRows(
 
       rows.push({
         dateKey: time.slice(0, 10),
-        hour: formatForecastHour(time),
+        time,
         temperature,
         weatherCode,
       })
@@ -146,9 +181,15 @@ function getHourlyForecastRows(
   )
 }
 
-function getHourlyDayOptions(rows: HourlyForecastRow[]) {
-  return Array.from(new Set(rows.map(row => row.dateKey))).map(dateKey => ({
+function getHourlyDayOptions(
+  forecast: SuccessfulApiResponse | undefined,
+): HourlyDayOption[] {
+  if (!forecast) {
+    return []
+  }
+
+  return forecast.daily.time.slice(0, 7).map(dateKey => ({
     dateKey,
-    label: formatForecastDay(dateKey),
+    label: formatForecastDayOption(dateKey),
   }))
 }
