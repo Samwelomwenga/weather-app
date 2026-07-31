@@ -17,6 +17,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   formatForecastDayOption,
   formatForecastHour,
@@ -41,6 +42,8 @@ type HourlyDayOption = {
   label: string
 }
 
+const loadingRowKeys = Array.from({ length: 8 }, (_, index) => index)
+
 export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
   const [selectedDate, setSelectedDate] = useQueryState(
     "day",
@@ -61,6 +64,13 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
   const selectedDayLabel = dayOptions.find(
     day => day.dateKey === selectedDateKey,
   )?.label ?? "Today"
+  const triggerLabel = dayOptions.length ? selectedDayLabel : "-"
+  const triggerAriaLabel = dayOptions.length
+    ? `Select hourly forecast day, ${selectedDayLabel} selected`
+    : "Hourly forecast day unavailable"
+  const listLabel = dayOptions.length
+    ? `${selectedDayLabel} hourly forecast`
+    : "Hourly forecast"
   const visibleRows = hourlyRows
     .filter(row => row.dateKey === selectedDateKey)
   const unit = forecast?.hourly_units.temperature_2m ?? "°C"
@@ -78,9 +88,9 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
               variant="secondary"
               size="sm"
               disabled={!dayOptions.length}
-              aria-label={`Select hourly forecast day, ${selectedDayLabel} selected`}
+              aria-label={triggerAriaLabel}
             >
-              {selectedDayLabel}
+              {triggerLabel}
               <img src={iconDropdown} alt="" className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -109,13 +119,21 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
         <div
           className="flex max-h-[37rem] flex-col gap-3 overflow-y-auto pr-1"
           role="list"
-          aria-label={`${selectedDayLabel} hourly forecast`}
+          aria-label={listLabel}
         >
           {isLoading && (
-            <p className="rounded-lg bg-secondary px-4 py-3 text-sm text-muted-foreground">
+            <p
+              className="sr-only"
+              role="status"
+              aria-live="polite"
+            >
               Loading hourly forecast...
             </p>
           )}
+
+          {isLoading && loadingRowKeys.map(key => (
+            <HourlyForecastRowSkeleton key={key} />
+          ))}
 
           {!isLoading && visibleRows.map((row) => {
             const weather = getWeatherSummary(row.weatherCode)
@@ -149,6 +167,16 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+function HourlyForecastRowSkeleton() {
+  return (
+    <div className="grid min-h-[3.875rem] grid-cols-[2.5rem_1fr_auto] items-center gap-3 rounded-lg border border-border bg-secondary px-4 py-3">
+      <Skeleton className="h-8 w-8 rounded-full" />
+      <Skeleton className="h-5 w-16" />
+      <Skeleton className="h-5 w-10" />
+    </div>
   )
 }
 

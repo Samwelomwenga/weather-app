@@ -4,9 +4,14 @@ import type {
   ApiResponse,
   SuccessfulApiResponse,
 } from "@/types/api-response"
-import { useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useMemo } from "react"
 import { queryKeys } from "@/constants/query-keys"
+
+export type WeatherForecastResult = {
+  forecast: SuccessfulApiResponse
+  location: SelectedLocation
+}
 
 export type FetchWeatherForecastQueryParams = {
   latitude: number
@@ -72,11 +77,51 @@ export function useFetchWeatherForecast(
     ],
   )
 
-  return useQuery<SuccessfulApiResponse, Error>({
-    queryKey: [...queryKeys.forecast, params],
-    queryFn: () => fetchWeatherForecast(params),
+  return useQuery<WeatherForecastResult, Error>({
+    queryKey: [...queryKeys.forecast, params, location],
+    queryFn: async () => {
+      if (!location) {
+        throw new Error("A selected location is required to fetch the forecast")
+      }
+
+      const forecast = await fetchWeatherForecast(params)
+
+      return {
+        forecast,
+        location,
+      }
+    },
     enabled: params !== null,
+    placeholderData: keepPreviousData,
   })
+}
+
+export function useLatestSuccessfulWeatherForecast() {
+  const queryClient = useQueryClient()
+  const latestQuery = queryClient
+    .getQueryCache()
+    .findAll({ queryKey: queryKeys.forecast })
+    .reduce<{
+      data: WeatherForecastResult
+      updatedAt: number
+    } | null>((latest, query) => {
+      const data = query.state.data as WeatherForecastResult | undefined
+
+      if (!data) {
+        return latest
+      }
+
+      if (!latest || query.state.dataUpdatedAt > latest.updatedAt) {
+        return {
+          data,
+          updatedAt: query.state.dataUpdatedAt,
+        }
+      }
+
+      return latest
+    }, null)
+
+  return latestQuery?.data
 }
 
 export function buildWeatherForecastParams(
