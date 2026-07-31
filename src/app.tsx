@@ -1,7 +1,9 @@
+import type { CSSProperties } from "react"
 import type { SelectedLocation } from "./hooks/use-selected-location"
 import type { SuccessfulApiResponse } from "./types/api-response"
 import { useCallback, useState } from "react"
 import todayCardBackground from "@/assets/images/bg-today-large.svg"
+import todayCardBackgroundSmall from "@/assets/images/bg-today-small.svg"
 import ErrorIcon from "@/assets/images/icon-error.svg"
 import LoadingIcon from "@/assets/images/icon-loading.svg"
 import RetryIcon from "@/assets/images/icon-retry.svg"
@@ -46,6 +48,11 @@ type DashboardNotice = {
     onClick: () => void
   }
 }
+
+const todayCardStyle = {
+  "--today-card-bg-large": `url(${todayCardBackground})`,
+  "--today-card-bg-small": `url(${todayCardBackgroundSmall})`,
+} as CSSProperties
 
 function App() {
   return (
@@ -125,16 +132,16 @@ function WeatherDashboard() {
   }, [searchLocation, setSelectedLocation])
 
   return (
-    <main className="min-h-screen px-4 py-6 text-left sm:px-8 lg:py-12">
-      <div className="mx-auto flex w-full max-w-[1216px] flex-col gap-10">
+    <main className="min-h-screen px-4 py-4 text-left sm:px-8 sm:py-6 lg:py-12">
+      <div className="mx-auto flex w-full max-w-[1216px] flex-col gap-8 lg:gap-12">
         <header className="flex items-center justify-between gap-4">
           <Logo />
           <UnitsConverter {...unitControls} />
         </header>
 
         {!isFullPageForecastError && (
-          <section className="mx-auto flex w-full max-w-[656px] flex-col items-center gap-8 text-center">
-            <h1 className="font-display text-4xl leading-tight font-bold text-balance sm:text-5xl lg:text-6xl">
+          <section className="mx-auto flex w-full max-w-[656px] flex-col items-center gap-8 pt-2 text-center lg:gap-12 lg:pt-8">
+            <h1 className="max-w-[12ch] font-display text-[2.5rem] leading-[1.15] font-bold text-balance sm:max-w-none sm:text-5xl lg:text-6xl">
               How&apos;s the sky looking today?
             </h1>
             <SearchInput
@@ -211,7 +218,7 @@ type DashboardStateNoticeProps = {
 function DashboardStateNotice({ notice }: DashboardStateNoticeProps) {
   return (
     <section
-      className="mx-auto flex w-full max-w-[656px] items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left"
+      className="mx-auto flex w-full max-w-[656px] flex-col gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left sm:flex-row sm:items-start"
       role={notice.role ?? "status"}
       aria-live={notice.role === "alert" ? "assertive" : "polite"}
     >
@@ -234,7 +241,7 @@ function DashboardStateNotice({ notice }: DashboardStateNoticeProps) {
         <Button
           variant="secondary"
           size="sm"
-          className="shrink-0"
+          className="shrink-0 self-start focus-visible:ring-2 focus-visible:ring-neutral-0 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           disabled={notice.action.isLoading}
           onClick={notice.action.onClick}
         >
@@ -268,7 +275,7 @@ function ForecastErrorState({ isRetrying, onRetry }: ForecastErrorStateProps) {
       </p>
       <Button
         variant="secondary"
-        className="mt-8"
+        className="mt-8 focus-visible:ring-2 focus-visible:ring-neutral-0 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         disabled={isRetrying}
         onClick={onRetry}
       >
@@ -318,7 +325,7 @@ function CurrentWeatherCard({
   if (isLoading) {
     return (
       <article
-        className="flex min-h-[17.75rem] flex-col items-center justify-center rounded-lg border border-border bg-card p-6 text-center sm:p-8 lg:min-h-[18rem]"
+        className="flex min-h-[15.25rem] flex-col items-center justify-center rounded-lg border border-border bg-card p-6 text-center sm:min-h-[17.75rem] sm:p-8 lg:min-h-[18rem]"
         role="status"
         aria-live="polite"
         aria-busy="true"
@@ -333,16 +340,16 @@ function CurrentWeatherCard({
 
   return (
     <article
-      className="flex min-h-[17.75rem] flex-col justify-between overflow-hidden rounded-lg bg-blue-500 bg-cover bg-center p-6 sm:p-8 lg:min-h-[18rem]"
-      style={{ backgroundImage: `url(${todayCardBackground})` }}
+      className="flex min-h-[15.25rem] flex-col justify-between overflow-hidden rounded-lg bg-blue-500 bg-[image:var(--today-card-bg-small)] bg-cover bg-center p-6 text-center sm:min-h-[17.75rem] sm:bg-[image:var(--today-card-bg-large)] sm:p-8 sm:text-left lg:min-h-[18rem]"
+      style={todayCardStyle}
     >
       <div>
         {locationName
           ? (
-              <h2 className="text-2xl font-bold sm:text-3xl">{locationName}</h2>
+              <h2 className="break-words text-2xl font-bold sm:text-3xl">{locationName}</h2>
             )
           : (
-              <Skeleton className="h-9 w-64 bg-neutral-0/20" />
+              <Skeleton className="mx-auto h-9 w-56 max-w-full bg-neutral-0/20 sm:mx-0 sm:w-64" />
             )}
 
         {date
@@ -350,7 +357,7 @@ function CurrentWeatherCard({
               <p className="mt-2 text-base font-medium text-neutral-0/85">{date}</p>
             )
           : (
-              <Skeleton className="mt-3 h-5 w-48 bg-neutral-0/20" />
+              <Skeleton className="mx-auto mt-3 h-5 w-48 max-w-full bg-neutral-0/20 sm:mx-0" />
             )}
       </div>
 
@@ -423,16 +430,16 @@ function MetricGrid({
   ]
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4">
       {metrics.map(metric => (
         <article
           key={metric.label}
-          className="min-h-32 rounded-lg border border-border bg-card p-5"
+          className="min-h-[6.25rem] rounded-lg border border-border bg-card p-4 transition-colors hover:border-neutral-300/50 hover:bg-neutral-700 sm:min-h-32 sm:p-5"
         >
           <p className="font-medium text-muted-foreground">{metric.label}</p>
           {metric.value
             ? (
-                <p className="mt-6 text-3xl font-semibold">{metric.value}</p>
+                <p className="mt-4 text-3xl font-semibold sm:mt-6">{metric.value}</p>
               )
             : (
                 <MetricValueFallback
@@ -458,7 +465,7 @@ function MetricValueFallback({
   if (isLoading) {
     return (
       <p
-        className="mt-6 text-3xl font-semibold"
+        className="mt-4 text-3xl font-semibold sm:mt-6"
         aria-label={`${label} loading`}
       >
         -
@@ -466,7 +473,7 @@ function MetricValueFallback({
     )
   }
 
-  return <Skeleton className="mt-7 h-9 w-24" />
+  return <Skeleton className="mt-5 h-9 w-24 sm:mt-7" />
 }
 
 type DashboardNoticeInput = {

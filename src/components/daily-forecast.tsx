@@ -30,7 +30,7 @@ export function DailyForecast({ forecast, isLoading }: DailyForecastProps) {
         Daily Forecast
       </h2>
 
-      <div className="mt-5 grid grid-cols-2 gap-4 min-[520px]:grid-cols-4 xl:grid-cols-7">
+      <div className="mt-5 grid grid-cols-3 gap-3 sm:gap-4 min-[680px]:grid-cols-4 xl:grid-cols-7">
         {isLoading && loadingCardKeys.map(key => (
           <DailyForecastCardSkeleton key={key} />
         ))}
@@ -62,16 +62,16 @@ function DailyForecastCard({ day, unit }: DailyForecastCardProps) {
   const weather = getWeatherSummary(day.weatherCode)
 
   return (
-    <article className="grid min-h-40 grid-rows-[auto_1fr_auto] justify-items-center rounded-lg border border-border bg-card px-4 py-5 text-center">
+    <article className="grid min-h-[8.75rem] grid-rows-[auto_1fr_auto] justify-items-center rounded-lg border border-border bg-card px-2 py-4 text-center transition-colors hover:border-neutral-300/50 hover:bg-neutral-700 sm:min-h-40 sm:px-4 sm:py-5">
       <h3 className="text-base font-semibold">
         {formatForecastShortDay(day.date)}
       </h3>
       <img
         src={weather.icon}
         alt={weather.description}
-        className="my-5 h-12 w-12 object-contain"
+        className="my-4 h-10 w-10 object-contain sm:my-5 sm:h-12 sm:w-12"
       />
-      <div className="flex w-full items-center justify-between gap-3 text-sm font-semibold">
+      <div className="flex w-full items-center justify-between gap-2 text-sm font-semibold sm:gap-3">
         <span>{formatTemperature(day.highTemperature, unit)}</span>
         <span className="text-muted-foreground">
           {formatTemperature(day.lowTemperature, unit)}
@@ -83,10 +83,10 @@ function DailyForecastCard({ day, unit }: DailyForecastCardProps) {
 
 function DailyForecastCardSkeleton() {
   return (
-    <article className="grid min-h-40 grid-rows-[auto_1fr_auto] justify-items-center rounded-lg border border-border bg-card px-4 py-5">
+    <article className="grid min-h-[8.75rem] grid-rows-[auto_1fr_auto] justify-items-center rounded-lg border border-border bg-card px-2 py-4 sm:min-h-40 sm:px-4 sm:py-5">
       <Skeleton className="h-5 w-12" />
-      <Skeleton className="my-5 h-12 w-12 rounded-full" />
-      <div className="flex w-full items-center justify-between gap-3">
+      <Skeleton className="my-4 h-10 w-10 rounded-full sm:my-5 sm:h-12 sm:w-12" />
+      <div className="flex w-full items-center justify-between gap-2 sm:gap-3">
         <Skeleton className="h-5 w-10" />
         <Skeleton className="h-5 w-10" />
       </div>

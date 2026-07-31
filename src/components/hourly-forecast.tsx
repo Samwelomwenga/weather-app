@@ -77,16 +77,19 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
 
   return (
     <Card
-      className="rounded-lg border-0 bg-card"
+      className="rounded-lg border-0 bg-card py-4 sm:py-6"
       aria-labelledby="hourly-forecast-heading"
     >
-      <CardHeader className="flex items-center justify-between gap-4">
-        <CardTitle id="hourly-forecast-heading">Hourly Forecast</CardTitle>
+      <CardHeader className="flex items-center justify-between gap-4 px-4 sm:px-6">
+        <CardTitle id="hourly-forecast-heading" className="text-lg sm:text-xl">
+          Hourly Forecast
+        </CardTitle>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="secondary"
               size="sm"
+              className="h-9 rounded-lg px-3 text-sm focus-visible:ring-2 focus-visible:ring-neutral-0 focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=open]:bg-neutral-600 sm:h-10 sm:text-base"
               disabled={!dayOptions.length}
               aria-label={triggerAriaLabel}
             >
@@ -94,7 +97,7 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
               <img src={iconDropdown} alt="" className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 rounded-lg p-2">
+          <DropdownMenuContent align="end" className="w-[13.5rem] rounded-lg border-border bg-popover p-2 shadow-xl">
             <DropdownMenuRadioGroup
               value={selectedDateKey}
               onValueChange={(dateKey) => {
@@ -106,7 +109,7 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
                   key={day.dateKey}
                   textValue={day.label}
                   value={day.dateKey}
-                  className="min-h-10 rounded-lg text-base data-[state=checked]:bg-secondary"
+                  className="min-h-10 cursor-pointer rounded-lg text-base focus:bg-secondary focus:text-foreground data-[highlighted]:bg-secondary data-[highlighted]:text-foreground data-[state=checked]:bg-secondary"
                 >
                   {day.label}
                 </DropdownMenuRadioItem>
@@ -115,7 +118,7 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 sm:px-6">
         <div
           className="flex max-h-[37rem] flex-col gap-3 overflow-y-auto pr-1"
           role="list"
@@ -141,7 +144,7 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
             return (
               <div
                 key={row.time}
-                className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 rounded-lg border border-border bg-secondary px-4 py-3"
+                className="grid min-h-[3.25rem] grid-cols-[2.5rem_1fr_auto] items-center gap-3 rounded-lg border border-border bg-secondary px-4 py-3 transition-colors hover:border-neutral-300/50 hover:bg-neutral-600 sm:min-h-[3.875rem]"
                 role="listitem"
               >
                 <img
@@ -172,7 +175,7 @@ export function HourlyForecast({ forecast, isLoading }: HourlyForecastProps) {
 
 function HourlyForecastRowSkeleton() {
   return (
-    <div className="grid min-h-[3.875rem] grid-cols-[2.5rem_1fr_auto] items-center gap-3 rounded-lg border border-border bg-secondary px-4 py-3">
+    <div className="grid min-h-[3.25rem] grid-cols-[2.5rem_1fr_auto] items-center gap-3 rounded-lg border border-border bg-secondary px-4 py-3 sm:min-h-[3.875rem]">
       <Skeleton className="h-8 w-8 rounded-full" />
       <Skeleton className="h-5 w-16" />
       <Skeleton className="h-5 w-10" />

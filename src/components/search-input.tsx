@@ -46,7 +46,7 @@ export function SearchInput({
           <label className="sr-only" htmlFor={inputId}>
             Search for a place
           </label>
-          <InputGroup className="h-14 rounded-lg border-0 bg-card">
+          <InputGroup className="h-14 rounded-lg border-0 bg-card transition-colors hover:bg-secondary/80 focus-within:ring-2 focus-within:ring-neutral-0 focus-within:ring-offset-2 focus-within:ring-offset-background">
             <InputGroupAddon>
               <img src={SearchIcon} alt="" className="h-5 w-5" />
             </InputGroupAddon>
@@ -89,7 +89,7 @@ export function SearchInput({
         </div>
 
         <Button
-          className="h-14 w-full rounded-lg px-8 text-base sm:w-auto"
+          className="h-14 w-full rounded-lg px-8 text-base focus-visible:ring-2 focus-visible:ring-neutral-0 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:w-auto"
           type="submit"
           disabled={isSearching}
         >

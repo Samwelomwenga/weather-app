@@ -73,17 +73,17 @@ export function UnitsConverter({
       <DropdownMenuTrigger asChild>
         <Button
           variant="secondary"
-          className="h-11 rounded-lg px-4 text-base"
+          className="h-8 rounded-lg px-3 text-sm focus-visible:ring-2 focus-visible:ring-neutral-0 focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=open]:bg-neutral-600 sm:h-11 sm:px-4 sm:text-base"
           aria-label="Change measurement units"
         >
-          <img src={iconUnits} alt="" className="h-5 w-5" />
+          <img src={iconUnits} alt="" className="h-4 w-4 sm:h-5 sm:w-5" />
           <span>Units</span>
           <img src={iconDropdown} alt="" className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64 rounded-lg p-2">
+      <DropdownMenuContent align="end" className="w-[13.5rem] rounded-lg border-border bg-popover p-2 shadow-xl">
         <DropdownMenuItem
-          className="min-h-10 rounded-lg px-3 text-base font-semibold"
+          className="min-h-10 cursor-pointer rounded-lg px-3 text-base font-semibold focus:bg-secondary focus:text-foreground data-[highlighted]:bg-secondary data-[highlighted]:text-foreground"
           onSelect={(event) => {
             event.preventDefault()
             applyPreset()
@@ -140,7 +140,7 @@ function UnitGroup<TValue extends string>({
           key={option.value}
           textValue={option.label}
           checked={option.value === value}
-          className="min-h-10 rounded-lg text-base data-[state=checked]:bg-secondary"
+          className="min-h-10 cursor-pointer rounded-lg text-base focus:bg-secondary focus:text-foreground data-[highlighted]:bg-secondary data-[highlighted]:text-foreground data-[state=checked]:bg-secondary"
           onCheckedChange={() => onValueChange(option.value)}
           onSelect={event => event.preventDefault()}
         >

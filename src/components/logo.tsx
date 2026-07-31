@@ -1,10 +1,11 @@
 import LogoSvg from "@/assets/images/logo.svg"
 
-  export function Logo() {
+export function Logo() {
   return (
-    <div className="flex items-center">
-      <img src={LogoSvg} alt="Logo" />
-      <span className="font-bold">Weather Now</span>
-    </div>
+    <img
+      src={LogoSvg}
+      alt="Weather Now"
+      className="h-7 w-auto sm:h-10"
+    />
   )
 }
