@@ -1,4 +1,5 @@
 import type { SuccessfulApiResponse } from "./types/api-response"
+import { useCallback, useState } from "react"
 import todayCardBackground from "@/assets/images/bg-today-large.svg"
 import { HourlyForecast } from "./components/hourly-forecast"
 import { Logo } from "./components/logo"
@@ -7,6 +8,10 @@ import { SearchInput } from "./components/search-input"
 import { Button } from "./components/ui/button"
 import { Skeleton } from "./components/ui/skeleton"
 import { UnitsConverter } from "./components/units-converter"
+import {
+  isLocationSearchNoResultsError,
+  useLocationSearch,
+} from "./hooks/use-location-search"
 import { useSelectedLocation } from "./hooks/use-selected-location"
 import { useFetchWeatherForecast } from "./hooks/use-weather-forecast"
 import {
@@ -15,6 +20,11 @@ import {
   formatTemperature,
   getWeatherSummary,
 } from "./lib/weather"
+
+type SearchFeedback
+  = | { type: "idle" }
+    | { type: "no-results", query: string }
+    | { type: "error", message: string }
 
 function App() {
   return (
@@ -29,17 +39,49 @@ function WeatherDashboard() {
     isResolvingLocation,
     isUsingFallback,
     selectedLocation,
+    setSelectedLocation,
   } = useSelectedLocation()
+  const [searchFeedback, setSearchFeedback] = useState<SearchFeedback>({
+    type: "idle",
+  })
+  const {
+    isPending: isSearchingLocation,
+    mutate: searchLocation,
+  } = useLocationSearch()
   const forecast = useFetchWeatherForecast(selectedLocation)
   const current = forecast.data?.current
   const currentUnits = forecast.data?.current_units
   const weather = current ? getWeatherSummary(current.weather_code) : null
+  const searchErrorMessage = searchFeedback.type === "error"
+    ? searchFeedback.message
+    : undefined
+  const isShowingNoResults = searchFeedback.type === "no-results"
   const statusMessage = getStatusMessage({
     isForecastError: forecast.isError,
     isForecastLoading: forecast.isLoading,
     isResolvingLocation,
     isUsingFallback,
   })
+  const handleLocationSearch = useCallback((query: string) => {
+    setSearchFeedback({ type: "idle" })
+    searchLocation(query, {
+      onError: (error) => {
+        if (isLocationSearchNoResultsError(error)) {
+          setSearchFeedback({ type: "no-results", query })
+          return
+        }
+
+        setSearchFeedback({
+          type: "error",
+          message: "Location search failed. Try again.",
+        })
+      },
+      onSuccess: (location) => {
+        void setSelectedLocation(location)
+        setSearchFeedback({ type: "idle" })
+      },
+    })
+  }, [searchLocation, setSelectedLocation])
 
   return (
     <main className="min-h-screen px-4 py-6 text-left sm:px-8 lg:py-12">
@@ -53,51 +95,78 @@ function WeatherDashboard() {
           <h1 className="font-display text-4xl leading-tight font-bold text-balance sm:text-5xl lg:text-6xl">
             How&apos;s the sky looking today?
           </h1>
-          <SearchInput />
+          <SearchInput
+            errorMessage={searchErrorMessage}
+            isSearching={isSearchingLocation}
+            onSearch={handleLocationSearch}
+          />
         </section>
 
-        {statusMessage && (
+        {statusMessage && !isShowingNoResults && (
           <p className="mx-auto w-full max-w-[656px] rounded-lg border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
             {statusMessage}
           </p>
         )}
 
-        <section className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(22rem,1fr)]">
-          <div className="flex flex-col gap-8">
-            {forecast.isError
-              ? (
-                  <ForecastErrorCard onRetry={() => void forecast.refetch()} />
-                )
-              : (
-                  <CurrentWeatherCard
-                    date={current && forecast.data
-                      ? formatForecastDate(current.time)
-                      : undefined}
-                    icon={weather?.icon}
-                    locationName={selectedLocation?.name}
-                    temperature={current && currentUnits
-                      ? formatTemperature(
-                          current.temperature_2m,
-                          currentUnits.temperature_2m,
-                        )
-                      : undefined}
-                    weatherDescription={weather?.description}
+        {isShowingNoResults
+          ? (
+              <NoSearchResults query={searchFeedback.query} />
+            )
+          : (
+              <section className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(22rem,1fr)]">
+                <div className="flex flex-col gap-8">
+                  {forecast.isError
+                    ? (
+                        <ForecastErrorCard onRetry={() => void forecast.refetch()} />
+                      )
+                    : (
+                        <CurrentWeatherCard
+                          date={current && forecast.data
+                            ? formatForecastDate(current.time)
+                            : undefined}
+                          icon={weather?.icon}
+                          locationName={selectedLocation?.name}
+                          temperature={current && currentUnits
+                            ? formatTemperature(
+                                current.temperature_2m,
+                                currentUnits.temperature_2m,
+                              )
+                            : undefined}
+                          weatherDescription={weather?.description}
+                        />
+                      )}
+
+                  <MetricGrid
+                    current={current}
+                    units={currentUnits}
                   />
-                )}
+                </div>
 
-            <MetricGrid
-              current={current}
-              units={currentUnits}
-            />
-          </div>
-
-          <HourlyForecast
-            forecast={forecast.data}
-            isLoading={isResolvingLocation || forecast.isLoading}
-          />
-        </section>
+                <HourlyForecast
+                  forecast={forecast.data}
+                  isLoading={isResolvingLocation || forecast.isLoading}
+                />
+              </section>
+            )}
       </div>
     </main>
+  )
+}
+
+type NoSearchResultsProps = {
+  query: string
+}
+
+function NoSearchResults({ query }: NoSearchResultsProps) {
+  return (
+    <p
+      className="py-2 text-center text-2xl font-bold"
+      role="status"
+      aria-live="polite"
+      aria-label={`No search result found for ${query}`}
+    >
+      No search result found!
+    </p>
   )
 }
 

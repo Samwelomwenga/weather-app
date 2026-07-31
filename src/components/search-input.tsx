@@ -1,3 +1,6 @@
+import type { FormEvent } from "react"
+import { useId, useState } from "react"
+import LoadingIcon from "@/assets/images/icon-loading.svg"
 import SearchIcon from "@/assets/images/icon-search.svg"
 import { Button } from "@/components/ui/button"
 import {
@@ -6,28 +9,93 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group"
 
-export function SearchInput() {
+type SearchInputProps = {
+  errorMessage?: string
+  isSearching?: boolean
+  onSearch: (query: string) => void
+}
+
+export function SearchInput({
+  errorMessage,
+  isSearching = false,
+  onSearch,
+}: SearchInputProps) {
+  const [query, setQuery] = useState("")
+  const inputId = useId()
+  const feedbackId = useId()
+  const trimmedQuery = query.trim()
+  const hasFeedback = isSearching || Boolean(errorMessage)
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    if (!trimmedQuery || isSearching) {
+      return
+    }
+
+    onSearch(trimmedQuery)
+  }
+
   return (
     <form
-      className="flex w-full flex-col place-items-center gap-3 sm:flex-row"
-      onSubmit={event => event.preventDefault()}
+      className="w-full"
+      onSubmit={handleSubmit}
     >
-      <InputGroup className="h-14 rounded-lg border-0 bg-card">
-        <InputGroupAddon>
-          <img src={SearchIcon} alt="" className="h-5 w-5" />
-        </InputGroupAddon>
-        <InputGroupInput
-          type="text"
-          placeholder="Search for a place..."
-          className="text-base"
-        />
-      </InputGroup>
-      <Button
-        className="h-14 w-full rounded-lg px-8 text-base sm:w-auto"
-        type="submit"
-      >
-        Search
-      </Button>
+      <div className="flex flex-col place-items-center gap-3 sm:flex-row sm:items-start">
+        <div className="w-full">
+          <label className="sr-only" htmlFor={inputId}>
+            Search for a place
+          </label>
+          <InputGroup className="h-14 rounded-lg border-0 bg-card">
+            <InputGroupAddon>
+              <img src={SearchIcon} alt="" className="h-5 w-5" />
+            </InputGroupAddon>
+            <InputGroupInput
+              id={inputId}
+              type="text"
+              value={query}
+              placeholder="Search for a place..."
+              className="text-base"
+              autoComplete="off"
+              aria-describedby={hasFeedback ? feedbackId : undefined}
+              aria-invalid={errorMessage ? true : undefined}
+              disabled={isSearching}
+              required
+              onChange={event => setQuery(event.target.value)}
+            />
+          </InputGroup>
+
+          {isSearching && (
+            <p
+              id={feedbackId}
+              className="mt-3 flex h-14 items-center gap-3 rounded-lg bg-card px-4 text-left text-sm font-medium"
+              role="status"
+              aria-live="polite"
+            >
+              <img src={LoadingIcon} alt="" className="h-5 w-5 animate-spin" />
+              Search in progress
+            </p>
+          )}
+
+          {!isSearching && errorMessage && (
+            <p
+              id={feedbackId}
+              className="mt-3 rounded-lg border border-destructive/40 bg-card px-4 py-3 text-left text-sm font-medium text-destructive"
+              role="alert"
+            >
+              {errorMessage}
+            </p>
+          )}
+        </div>
+
+        <Button
+          className="h-14 w-full rounded-lg px-8 text-base sm:w-auto"
+          type="submit"
+          disabled={isSearching}
+        >
+          Search
+        </Button>
+      </div>
     </form>
   )
 }

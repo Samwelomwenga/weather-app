@@ -5,7 +5,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from "nuqs"
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { useGeolocation } from "@/hooks/use-geolocation"
 
 const locationSources = ["current", "fallback", "search"] as const
@@ -60,6 +60,10 @@ export function useSelectedLocation() {
     () => parseSelectedLocation(urlLocation),
     [urlLocation],
   )
+  const setSelectedLocation = useCallback(
+    (location: SelectedLocation) => setUrlLocation(location),
+    [setUrlLocation],
+  )
   const geolocation = useGeolocation({ enabled: selectedLocation === null })
 
   useEffect(() => {
@@ -90,6 +94,7 @@ export function useSelectedLocation() {
 
   return {
     selectedLocation,
+    setSelectedLocation,
     isResolvingLocation: selectedLocation === null && geolocation.isPending,
     isUsingFallback: selectedLocation?.source === "fallback",
   }
