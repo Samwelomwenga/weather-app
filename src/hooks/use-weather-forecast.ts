@@ -1,4 +1,5 @@
 import type { SelectedLocation } from "@/hooks/use-selected-location"
+import type { UnitPreferences } from "@/lib/units"
 import type {
   ApiResponse,
   SuccessfulApiResponse,
@@ -44,10 +45,31 @@ const dailyForecastFields = [
   "temperature_2m_min",
 ] as const
 
-export function useFetchWeatherForecast(location: SelectedLocation | null) {
+export function useFetchWeatherForecast(
+  location: SelectedLocation | null,
+  unitPreferences: UnitPreferences,
+) {
+  const {
+    precipitationUnit,
+    temperatureUnit,
+    windSpeedUnit,
+  } = unitPreferences
   const params = useMemo(
-    () => (location ? buildWeatherForecastParams(location) : null),
-    [location],
+    () => (
+      location
+        ? buildWeatherForecastParams(location, {
+            precipitationUnit,
+            temperatureUnit,
+            windSpeedUnit,
+          })
+        : null
+    ),
+    [
+      location,
+      precipitationUnit,
+      temperatureUnit,
+      windSpeedUnit,
+    ],
   )
 
   return useQuery<SuccessfulApiResponse, Error>({
@@ -59,6 +81,7 @@ export function useFetchWeatherForecast(location: SelectedLocation | null) {
 
 export function buildWeatherForecastParams(
   location: SelectedLocation,
+  unitPreferences: UnitPreferences,
 ): FetchWeatherForecastQueryParams {
   return {
     latitude: location.latitude,
@@ -66,9 +89,9 @@ export function buildWeatherForecastParams(
     current: currentWeatherFields.join(","),
     hourly: hourlyForecastFields.join(","),
     daily: dailyForecastFields.join(","),
-    temperature_unit: "celsius",
-    wind_speed_unit: "kmh",
-    precipitation_unit: "mm",
+    temperature_unit: unitPreferences.temperatureUnit,
+    wind_speed_unit: unitPreferences.windSpeedUnit,
+    precipitation_unit: unitPreferences.precipitationUnit,
     timezone: location.timezone,
     forecast_days: 7,
   }

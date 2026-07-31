@@ -13,6 +13,7 @@ import {
   useLocationSearch,
 } from "./hooks/use-location-search"
 import { useSelectedLocation } from "./hooks/use-selected-location"
+import { useUnitPreferences } from "./hooks/use-unit-preferences"
 import { useFetchWeatherForecast } from "./hooks/use-weather-forecast"
 import {
   formatForecastDate,
@@ -48,7 +49,11 @@ function WeatherDashboard() {
     isPending: isSearchingLocation,
     mutate: searchLocation,
   } = useLocationSearch()
-  const forecast = useFetchWeatherForecast(selectedLocation)
+  const unitControls = useUnitPreferences()
+  const forecast = useFetchWeatherForecast(
+    selectedLocation,
+    unitControls.unitPreferences,
+  )
   const current = forecast.data?.current
   const currentUnits = forecast.data?.current_units
   const weather = current ? getWeatherSummary(current.weather_code) : null
@@ -88,7 +93,7 @@ function WeatherDashboard() {
       <div className="mx-auto flex w-full max-w-[1216px] flex-col gap-10">
         <header className="flex items-center justify-between gap-4">
           <Logo />
-          <UnitsConverter />
+          <UnitsConverter {...unitControls} />
         </header>
 
         <section className="mx-auto flex w-full max-w-[656px] flex-col items-center gap-8 text-center">

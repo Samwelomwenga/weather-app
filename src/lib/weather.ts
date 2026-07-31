@@ -76,13 +76,16 @@ export function formatTemperature(value: number, unit: string) {
 }
 
 export function formatMeasurement(value: number, unit: string) {
-  const rounded = Math.round(value)
+  const label = unit === "inch" ? "in" : unit
+  const rounded = unit === "inch"
+    ? Math.round(value * 100) / 100
+    : Math.round(value)
 
   if (unit === "%") {
     return `${rounded}%`
   }
 
-  return `${rounded} ${unit}`
+  return `${rounded} ${label}`
 }
 
 export function formatForecastDate(value: string) {
