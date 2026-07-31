@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 import { queryKeys } from "@/constants/query-keys"
 
-export interface FetchWeatherForecastQueryParams {
+export type FetchWeatherForecastQueryParams = {
   latitude: number
   longitude: number
   current: string

@@ -12,7 +12,7 @@ const locationSources = ["current", "fallback", "search"] as const
 
 export type LocationSource = typeof locationSources[number]
 
-export interface SelectedLocation {
+export type SelectedLocation = {
   latitude: number
   longitude: number
   timezone: string

@@ -7,7 +7,7 @@ import snowIcon from "@/assets/images/icon-snow.webp"
 import stormIcon from "@/assets/images/icon-storm.webp"
 import sunnyIcon from "@/assets/images/icon-sunny.webp"
 
-interface WeatherSummary {
+type WeatherSummary = {
   description: string
   icon: string
 }

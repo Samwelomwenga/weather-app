@@ -22,12 +22,12 @@ import {
   getWeatherSummary,
 } from "@/lib/weather"
 
-interface HourlyForecastProps {
+type HourlyForecastProps = {
   forecast?: SuccessfulApiResponse
   isLoading?: boolean
 }
 
-interface HourlyForecastRow {
+type HourlyForecastRow = {
   dateKey: string
   hour: string
   temperature: number

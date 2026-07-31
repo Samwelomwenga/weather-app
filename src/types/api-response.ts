@@ -1,4 +1,4 @@
-export interface SuccessfulApiResponse {
+export type SuccessfulApiResponse = {
   latitude: number
   longitude: number
   generationtime_ms: number
@@ -49,7 +49,7 @@ export interface SuccessfulApiResponse {
     temperature_2m_min: number[]
   }
 }
-export interface ErrorApiResponse {
+export type ErrorApiResponse = {
   error: boolean
   reason: string
 }

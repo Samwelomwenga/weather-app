@@ -101,7 +101,7 @@ function WeatherDashboard() {
   )
 }
 
-interface CurrentWeatherCardProps {
+type CurrentWeatherCardProps = {
   date?: string
   icon?: string
   locationName?: string
@@ -166,7 +166,7 @@ function CurrentWeatherCard({
   )
 }
 
-interface MetricGridProps {
+type MetricGridProps = {
   current: SuccessfulApiResponse["current"] | undefined
   units: SuccessfulApiResponse["current_units"] | undefined
 }
@@ -223,7 +223,7 @@ function MetricGrid({ current, units }: MetricGridProps) {
   )
 }
 
-interface ForecastErrorCardProps {
+type ForecastErrorCardProps = {
   onRetry: () => void
 }
 
@@ -242,7 +242,7 @@ function ForecastErrorCard({ onRetry }: ForecastErrorCardProps) {
   )
 }
 
-interface StatusMessageInput {
+type StatusMessageInput = {
   isForecastError: boolean
   isForecastLoading: boolean
   isResolvingLocation: boolean

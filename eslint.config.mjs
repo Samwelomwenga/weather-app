@@ -26,6 +26,7 @@ export default antfu({
     },
   },
   rules: {
+    "ts/consistent-type-definitions": ["error", "type"],
     "ts/no-floating-promises": "error",
   },
 }, {

@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "@/constants/query-keys"
 
-interface BrowserCoordinates {
+type BrowserCoordinates = {
   latitude: number
   longitude: number
 }
 
-interface UseGeolocationOptions {
+type UseGeolocationOptions = {
   enabled?: boolean
 }
 
