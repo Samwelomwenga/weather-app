@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,600&family=Bricolage+Grotesque:wght@700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,600&family=Bricolage+Grotesque:wght@700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -46,8 +46,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* Fonts */
-  --font-sans: 'DM Sans', sans-serif;
-  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-sans: "DM Sans", sans-serif;
+  --font-display: "Bricolage Grotesque", sans-serif;
 
   /* Palette tokens */
   --color-neutral-900: hsl(243, 96%, 9%);
@@ -64,24 +64,24 @@
 
 :root {
   --radius: 0.625rem;
-  --background: hsl(243, 96%, 9%);           /* Neutral 900 */
-  --foreground: hsl(0, 0%, 100%);             /* Neutral 0 */
-  --card: hsl(243, 27%, 20%);                /* Neutral 800 */
+  --background: hsl(243, 96%, 9%); /* Neutral 900 */
+  --foreground: hsl(0, 0%, 100%); /* Neutral 0 */
+  --card: hsl(243, 27%, 20%); /* Neutral 800 */
   --card-foreground: hsl(0, 0%, 100%);
-  --popover: hsl(243, 27%, 20%);             /* Neutral 800 */
+  --popover: hsl(243, 27%, 20%); /* Neutral 800 */
   --popover-foreground: hsl(0, 0%, 100%);
-  --primary: hsl(233, 67%, 56%);             /* Blue 500 */
+  --primary: hsl(233, 67%, 56%); /* Blue 500 */
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(243, 23%, 24%);           /* Neutral 700 */
+  --secondary: hsl(243, 23%, 24%); /* Neutral 700 */
   --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(243, 23%, 24%);               /* Neutral 700 */
-  --muted-foreground: hsl(240, 6%, 70%);     /* Neutral 300 */
-  --accent: hsl(28, 100%, 52%);              /* Orange 500 */
+  --muted: hsl(243, 23%, 24%); /* Neutral 700 */
+  --muted-foreground: hsl(240, 6%, 70%); /* Neutral 300 */
+  --accent: hsl(28, 100%, 52%); /* Orange 500 */
   --accent-foreground: hsl(0, 0%, 100%);
   --destructive: hsl(0, 84%, 60%);
-  --border: hsl(243, 23%, 30%);              /* Neutral 600 */
-  --input: hsl(243, 23%, 30%);               /* Neutral 600 */
-  --ring: hsl(233, 67%, 56%);                /* Blue 500 */
+  --border: hsl(243, 23%, 30%); /* Neutral 600 */
+  --input: hsl(243, 23%, 30%); /* Neutral 600 */
+  --ring: hsl(233, 67%, 56%); /* Blue 500 */
   --chart-1: hsl(28, 100%, 52%);
   --chart-2: hsl(233, 67%, 56%);
   --chart-3: hsl(248, 70%, 36%);
@@ -98,24 +98,24 @@
 }
 
 .light {
-  --background: hsl(0, 0%, 100%);            /* Neutral 0 */
-  --foreground: hsl(243, 96%, 9%);            /* Neutral 900 */
-  --card: hsl(0, 0%, 100%);                  /* Neutral 0 */
+  --background: hsl(0, 0%, 100%); /* Neutral 0 */
+  --foreground: hsl(243, 96%, 9%); /* Neutral 900 */
+  --card: hsl(0, 0%, 100%); /* Neutral 0 */
   --card-foreground: hsl(243, 96%, 9%);
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(243, 96%, 9%);
-  --primary: hsl(233, 67%, 56%);             /* Blue 500 */
+  --primary: hsl(233, 67%, 56%); /* Blue 500 */
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(250, 6%, 84%);            /* Neutral 200 */
+  --secondary: hsl(250, 6%, 84%); /* Neutral 200 */
   --secondary-foreground: hsl(243, 96%, 9%);
-  --muted: hsl(250, 6%, 84%);                /* Neutral 200 */
-  --muted-foreground: hsl(243, 23%, 30%);    /* Neutral 600 */
-  --accent: hsl(28, 100%, 52%);              /* Orange 500 */
+  --muted: hsl(250, 6%, 84%); /* Neutral 200 */
+  --muted-foreground: hsl(243, 23%, 30%); /* Neutral 600 */
+  --accent: hsl(28, 100%, 52%); /* Orange 500 */
   --accent-foreground: hsl(0, 0%, 100%);
   --destructive: hsl(0, 84%, 60%);
-  --border: hsl(240, 6%, 70%);               /* Neutral 300 */
-  --input: hsl(250, 6%, 84%);                /* Neutral 200 */
-  --ring: hsl(233, 67%, 56%);                /* Blue 500 */
+  --border: hsl(240, 6%, 70%); /* Neutral 300 */
+  --input: hsl(250, 6%, 84%); /* Neutral 200 */
+  --ring: hsl(233, 67%, 56%); /* Blue 500 */
   --chart-1: hsl(28, 100%, 52%);
   --chart-2: hsl(233, 67%, 56%);
   --chart-3: hsl(248, 70%, 36%);
