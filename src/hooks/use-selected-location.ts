@@ -96,7 +96,6 @@ export function useSelectedLocation() {
     selectedLocation,
     setSelectedLocation,
     isResolvingLocation: selectedLocation === null && geolocation.isPending,
-    isUsingFallback: selectedLocation?.source === "fallback",
   }
 }
 

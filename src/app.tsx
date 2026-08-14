@@ -65,7 +65,6 @@ function App() {
 function WeatherDashboard() {
   const {
     isResolvingLocation,
-    isUsingFallback,
     selectedLocation,
     setSelectedLocation,
   } = useSelectedLocation()
@@ -104,7 +103,6 @@ function WeatherDashboard() {
     isForecastFetching: forecast.isFetching,
     isForecastLoading: forecast.isLoading,
     isResolvingLocation,
-    isUsingFallback,
     onRetry: () => void forecast.refetch(),
     searchFeedback,
     selectedLocation,
@@ -482,7 +480,6 @@ type DashboardNoticeInput = {
   isForecastFetching: boolean
   isForecastLoading: boolean
   isResolvingLocation: boolean
-  isUsingFallback: boolean
   onRetry: () => void
   searchFeedback: SearchFeedback
   selectedLocation: SelectedLocation | null
@@ -494,7 +491,6 @@ function getDashboardNotice({
   isForecastFetching,
   isForecastLoading,
   isResolvingLocation,
-  isUsingFallback,
   onRetry,
   searchFeedback,
   selectedLocation,
@@ -541,14 +537,6 @@ function getDashboardNotice({
       title: "Requesting your current location...",
       message: `Showing ${displayedLocation.name} while your location is resolved.`,
       icon: LoadingIcon,
-      role: "status",
-    }
-  }
-
-  if (isUsingFallback && displayedLocation) {
-    return {
-      title: "Using fallback location",
-      message: `Showing ${displayedLocation.name} because current location is unavailable.`,
       role: "status",
     }
   }
