@@ -14,7 +14,9 @@ export default function Provider({ children }: PropsWithChildren) {
     <NuqsAdapter>
       <QueryClientProvider client={queryClient}>
         {children}
-        <ReactQueryDevtools initialIsOpen={false} />
+        {import.meta.env.DEV && (
+          <ReactQueryDevtools initialIsOpen={false} />
+        )}
       </QueryClientProvider>
     </NuqsAdapter>
   )
