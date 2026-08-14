@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react"
 import type { SelectedLocation } from "./hooks/use-selected-location"
 import type { SuccessfulApiResponse } from "./types/api-response"
-import { useCallback, useState } from "react"
 import todayCardBackground from "@/assets/images/bg-today-large.svg"
 import todayCardBackgroundSmall from "@/assets/images/bg-today-small.svg"
 import ErrorIcon from "@/assets/images/icon-error.svg"
@@ -11,14 +10,10 @@ import { DailyForecast } from "./components/daily-forecast"
 import { HourlyForecast } from "./components/hourly-forecast"
 import { Logo } from "./components/logo"
 import Provider from "./components/provider"
-import { SearchInput } from "./components/search-input"
+import { SearchCombobox } from "./components/search-combobox"
 import { Button } from "./components/ui/button"
 import { Skeleton } from "./components/ui/skeleton"
 import { UnitsConverter } from "./components/units-converter"
-import {
-  isLocationSearchNoResultsError,
-  useLocationSearch,
-} from "./hooks/use-location-search"
 import { useSelectedLocation } from "./hooks/use-selected-location"
 import { useUnitPreferences } from "./hooks/use-unit-preferences"
 import {
@@ -31,11 +26,6 @@ import {
   formatTemperature,
   getWeatherSummary,
 } from "./lib/weather"
-
-type SearchFeedback
-  = | { type: "idle" }
-    | { type: "no-results", query: string }
-    | { type: "error", message: string }
 
 type DashboardNotice = {
   title: string
@@ -68,13 +58,6 @@ function WeatherDashboard() {
     selectedLocation,
     setSelectedLocation,
   } = useSelectedLocation()
-  const [searchFeedback, setSearchFeedback] = useState<SearchFeedback>({
-    type: "idle",
-  })
-  const {
-    isPending: isSearchingLocation,
-    mutate: searchLocation,
-  } = useLocationSearch()
   const unitControls = useUnitPreferences()
   const forecast = useFetchWeatherForecast(
     selectedLocation,
@@ -85,16 +68,9 @@ function WeatherDashboard() {
   const current = displayedForecast?.forecast.current
   const currentUnits = displayedForecast?.forecast.current_units
   const weather = current ? getWeatherSummary(current.weather_code) : null
-  const searchErrorMessage = searchFeedback.type === "error"
-    ? searchFeedback.message
-    : undefined
-  const isShowingNoResults = searchFeedback.type === "no-results"
   const isDashboardLoading = !displayedForecast
     && (isResolvingLocation || forecast.isLoading)
   const isFullPageForecastError = forecast.isError
-    && !displayedForecast
-    && !isDashboardLoading
-  const isFullPageNoResults = isShowingNoResults
     && !displayedForecast
     && !isDashboardLoading
   const dashboardNotice = getDashboardNotice({
@@ -104,30 +80,8 @@ function WeatherDashboard() {
     isForecastLoading: forecast.isLoading,
     isResolvingLocation,
     onRetry: () => void forecast.refetch(),
-    searchFeedback,
     selectedLocation,
   })
-
-  const handleLocationSearch = useCallback((query: string) => {
-    setSearchFeedback({ type: "idle" })
-    searchLocation(query, {
-      onError: (error) => {
-        if (isLocationSearchNoResultsError(error)) {
-          setSearchFeedback({ type: "no-results", query })
-          return
-        }
-
-        setSearchFeedback({
-          type: "error",
-          message: "Location search failed. Try again.",
-        })
-      },
-      onSuccess: (location) => {
-        void setSelectedLocation(location)
-        setSearchFeedback({ type: "idle" })
-      },
-    })
-  }, [searchLocation, setSelectedLocation])
 
   return (
     <main className="min-h-screen px-4 py-4 text-left sm:px-8 sm:py-6 lg:py-12">
@@ -142,10 +96,8 @@ function WeatherDashboard() {
             <h1 className="max-w-[12ch] font-display text-[2.5rem] leading-[1.15] font-bold text-balance sm:max-w-none sm:text-5xl lg:text-6xl">
               How&apos;s the sky looking today?
             </h1>
-            <SearchInput
-              errorMessage={searchErrorMessage}
-              isSearching={isSearchingLocation}
-              onSearch={handleLocationSearch}
+            <SearchCombobox
+              onSelect={location => void setSelectedLocation(location)}
             />
           </section>
         )}
@@ -157,53 +109,49 @@ function WeatherDashboard() {
                 onRetry={() => void forecast.refetch()}
               />
             )
-          : isFullPageNoResults
-            ? (
-                <NoSearchResults query={searchFeedback.query} />
-              )
-            : (
-                <>
-                  {dashboardNotice && (
-                    <DashboardStateNotice notice={dashboardNotice} />
-                  )}
+          : (
+              <>
+                {dashboardNotice && (
+                  <DashboardStateNotice notice={dashboardNotice} />
+                )}
 
-                  <section className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(22rem,1fr)]">
-                    <div className="flex flex-col gap-8">
-                      <CurrentWeatherCard
-                        date={current && displayedForecast
-                          ? formatForecastDate(current.time)
-                          : undefined}
-                        icon={weather?.icon}
-                        isLoading={isDashboardLoading}
-                        locationName={displayedForecast?.location.name}
-                        temperature={current && currentUnits
-                          ? formatTemperature(
-                              current.temperature_2m,
-                              currentUnits.temperature_2m,
-                            )
-                          : undefined}
-                        weatherDescription={weather?.description}
-                      />
+                <section className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(22rem,1fr)]">
+                  <div className="flex flex-col gap-8">
+                    <CurrentWeatherCard
+                      date={current && displayedForecast
+                        ? formatForecastDate(current.time)
+                        : undefined}
+                      icon={weather?.icon}
+                      isLoading={isDashboardLoading}
+                      locationName={displayedForecast?.location.name}
+                      temperature={current && currentUnits
+                        ? formatTemperature(
+                            current.temperature_2m,
+                            currentUnits.temperature_2m,
+                          )
+                        : undefined}
+                      weatherDescription={weather?.description}
+                    />
 
-                      <MetricGrid
-                        current={current}
-                        isLoading={isDashboardLoading}
-                        units={currentUnits}
-                      />
+                    <MetricGrid
+                      current={current}
+                      isLoading={isDashboardLoading}
+                      units={currentUnits}
+                    />
 
-                      <DailyForecast
-                        forecast={displayedForecast?.forecast}
-                        isLoading={isDashboardLoading}
-                      />
-                    </div>
-
-                    <HourlyForecast
+                    <DailyForecast
                       forecast={displayedForecast?.forecast}
                       isLoading={isDashboardLoading}
                     />
-                  </section>
-                </>
-              )}
+                  </div>
+
+                  <HourlyForecast
+                    forecast={displayedForecast?.forecast}
+                    isLoading={isDashboardLoading}
+                  />
+                </section>
+              </>
+            )}
       </div>
     </main>
   )
@@ -280,25 +228,6 @@ function ForecastErrorState({ isRetrying, onRetry }: ForecastErrorStateProps) {
         <img src={RetryIcon} alt="" className="h-4 w-4" />
         {isRetrying ? "Retrying..." : "Retry"}
       </Button>
-    </section>
-  )
-}
-
-type NoSearchResultsProps = {
-  query: string
-}
-
-function NoSearchResults({ query }: NoSearchResultsProps) {
-  return (
-    <section
-      className="mx-auto flex min-h-[28rem] w-full max-w-[656px] items-start justify-center pt-3 text-center"
-      role="status"
-      aria-live="polite"
-      aria-label={`No search result found for ${query}`}
-    >
-      <h2 className="text-2xl font-bold">
-        No search result found!
-      </h2>
     </section>
   )
 }
@@ -481,7 +410,6 @@ type DashboardNoticeInput = {
   isForecastLoading: boolean
   isResolvingLocation: boolean
   onRetry: () => void
-  searchFeedback: SearchFeedback
   selectedLocation: SelectedLocation | null
 }
 
@@ -492,7 +420,6 @@ function getDashboardNotice({
   isForecastLoading,
   isResolvingLocation,
   onRetry,
-  searchFeedback,
   selectedLocation,
 }: DashboardNoticeInput): DashboardNotice | null {
   if (isForecastError && displayedLocation) {
@@ -509,14 +436,6 @@ function getDashboardNotice({
         label: "Retry",
         onClick: onRetry,
       },
-    }
-  }
-
-  if (searchFeedback.type === "no-results" && displayedLocation) {
-    return {
-      title: "No search result found!",
-      message: `No usable result for "${searchFeedback.query}". Showing ${displayedLocation.name}.`,
-      role: "status",
     }
   }
 
