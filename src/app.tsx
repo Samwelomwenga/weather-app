@@ -249,26 +249,13 @@ function CurrentWeatherCard({
   temperature,
   weatherDescription,
 }: CurrentWeatherCardProps) {
-  if (isLoading) {
-    return (
-      <article
-        className="flex min-h-[15.25rem] flex-col items-center justify-center rounded-lg border border-border bg-card p-6 text-center sm:min-h-[17.75rem] sm:p-8 lg:min-h-[18rem]"
-        role="status"
-        aria-live="polite"
-        aria-busy="true"
-      >
-        <img src={LoadingIcon} alt="" className="h-10 w-10 animate-spin" />
-        <p className="mt-4 text-base font-medium text-neutral-0/85">
-          Loading...
-        </p>
-      </article>
-    )
-  }
-
   return (
     <article
       className="flex min-h-[15.25rem] flex-col justify-between overflow-hidden rounded-lg bg-blue-500 bg-[image:var(--today-card-bg-small)] bg-cover bg-center p-6 text-center sm:min-h-[17.75rem] sm:bg-[image:var(--today-card-bg-large)] sm:p-8 sm:text-left lg:min-h-[18rem]"
       style={todayCardStyle}
+      role={isLoading ? "status" : undefined}
+      aria-live={isLoading ? "polite" : undefined}
+      aria-busy={isLoading || undefined}
     >
       <div>
         {locationName
