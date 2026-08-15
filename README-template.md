@@ -85,7 +85,7 @@ To see how you can add code snippets, see below:
 
 ```js
 function proudOfThisFunc() {
-  console.log("🎉")
+  console.warn("Remember to replace this example")
 }
 ```
 
