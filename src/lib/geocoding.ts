@@ -1,5 +1,6 @@
 import type { SelectedLocation } from "@/hooks/use-selected-location"
 import type {
+  BigDataCloudReverseResult,
   GeocodingResponse,
   LocationSuggestion,
   OpenMeteoGeocodingResult,
@@ -7,6 +8,9 @@ import type {
 import { SEARCH_MAX_RESULTS } from "@/constants/search"
 
 const OPEN_METEO_GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
+
+const BIG_DATA_CLOUD_REVERSE_URL
+  = "https://api.bigdatacloud.net/data/reverse-geocode-client"
 
 /** Forward-geocode a place name into up to `SEARCH_MAX_RESULTS` suggestions. */
 export async function searchLocations(
@@ -35,6 +39,37 @@ export async function searchLocations(
     .map(toSuggestion)
 }
 
+/**
+ * Reverse-geocode coordinates into a "City, Admin1, Country" label via
+ * BigDataCloud's keyless, CORS-enabled client endpoint (SAM-105). Returns null
+ * when the lookup yields no usable place name so callers can fall back to
+ * "Current location".
+ */
+export async function reverseGeocode(
+  latitude: number,
+  longitude: number,
+): Promise<string | null> {
+  const searchParams = new URLSearchParams({
+    latitude: String(latitude),
+    longitude: String(longitude),
+    localityLanguage: "en",
+  })
+  const response = await fetch(`${BIG_DATA_CLOUD_REVERSE_URL}?${searchParams}`)
+
+  if (!response.ok) {
+    throw new Error("Failed to reverse-geocode the current location")
+  }
+
+  const data = await response.json() as BigDataCloudReverseResult
+  const label = formatLocationLabel([
+    data.city || data.locality,
+    data.principalSubdivision,
+    data.countryName,
+  ])
+
+  return label || null
+}
+
 export function suggestionToLocation(
   suggestion: LocationSuggestion,
 ): SelectedLocation {
@@ -50,7 +85,7 @@ export function suggestionToLocation(
 function toSuggestion(result: OpenMeteoGeocodingResult): LocationSuggestion {
   return {
     id: String(result.id ?? `${result.latitude},${result.longitude}`),
-    label: formatLocationLabel(result),
+    label: formatLocationLabel([result.name, result.admin1, result.country]),
     city: result.name,
     admin1: result.admin1,
     country: result.country,
@@ -60,8 +95,8 @@ function toSuggestion(result: OpenMeteoGeocodingResult): LocationSuggestion {
   }
 }
 
-function formatLocationLabel(result: OpenMeteoGeocodingResult) {
-  return [result.name, result.admin1, result.country]
+function formatLocationLabel(parts: Array<string | undefined>) {
+  return parts
     .filter(isUniquePresentLocationPart)
     .join(", ")
 }

@@ -25,3 +25,10 @@ export type GeocodingResponse = {
   error?: boolean
   reason?: string
 }
+
+export type BigDataCloudReverseResult = {
+  city?: string
+  locality?: string
+  principalSubdivision?: string
+  countryName?: string
+}

@@ -3,4 +3,5 @@ export const queryKeys = {
   forecast: ["forecast"],
   geolocation: ["geolocation"],
   locationSuggestions: ["location-suggestions"],
+  reverseGeocode: ["reverse-geocode"],
 } as const
