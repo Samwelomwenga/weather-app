@@ -6,7 +6,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from "nuqs"
-import { useCallback, useEffect, useMemo } from "react"
+import { useEffect } from "react"
 import { queryKeys } from "@/constants/query-keys"
 import { useGeolocation } from "@/hooks/use-geolocation"
 import { reverseGeocode } from "@/lib/geocoding"
@@ -61,14 +61,9 @@ export function useSelectedLocation() {
       urlKeys: selectedLocationUrlKeys,
     },
   )
-  const selectedLocation = useMemo(
-    () => parseSelectedLocation(urlLocation),
-    [urlLocation],
-  )
-  const setSelectedLocation = useCallback(
-    (location: SelectedLocation) => setUrlLocation(location),
-    [setUrlLocation],
-  )
+  const selectedLocation = parseSelectedLocation(urlLocation)
+  const setSelectedLocation = (location: SelectedLocation) =>
+    setUrlLocation(location)
   const geolocation = useGeolocation({ enabled: selectedLocation === null })
 
   // Once geolocation succeeds, turn the raw coordinates into a display name
