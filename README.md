@@ -95,31 +95,6 @@ Preview the production build:
 pnpm preview
 ```
 
-## Verification
-
-Last checked on July 31, 2026.
-
-- Lint: passed with `pnpm lint`.
-- Production build: passed with `pnpm build`.
-- Production preview smoke check: passed against `http://127.0.0.1:4173/`.
-- Browser verification: passed with Chrome against local API fixtures for
-  deterministic loading, no-results, and API-error states.
-
-Manual verification covered:
-
-- Default geolocation success.
-- Geolocation denied or unavailable fallback to Berlin.
-- Search success.
-- Search no-results behavior.
-- API error and retry behavior after automatic query retries are exhausted.
-- Unit dropdown behavior and unit persistence in the URL.
-- Hourly day selector behavior and selected-day persistence in the URL.
-- Desktop layout around 1440px.
-- Mobile layout around 375px.
-- Narrow mobile layout around 320px.
-- Loading, search-in-progress, no-results, API-error, dropdown, hover, and
-  focus states.
-
 ## Known Limitations
 
 - The repository does not currently include a configured production deployment
