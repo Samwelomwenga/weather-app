@@ -1,75 +1,109 @@
-# React + TypeScript + Vite
+# Frontend Mentor - Weather app solution
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains a completed solution for the
+[Frontend Mentor Weather app challenge](https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49).
+The app uses the free
+[Open-Meteo Forecast API](https://open-meteo.com/en/docs) and
+[Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api) to
+show current, daily, and hourly weather for a selected location.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Users can:
 
-## React Compiler
+- Resolve weather for their browser location when geolocation is allowed.
+- Fall back to Berlin, Germany when geolocation is denied or unavailable.
+- Search for a place and use the best matching Open-Meteo geocoding result.
+- View the current temperature, condition icon, location, date, feels-like
+  temperature, humidity, wind speed, and precipitation.
+- Browse a 7-day daily forecast with high and low temperatures.
+- Switch the hourly forecast between forecast days.
+- Change measurement units between metric and imperial presets or individual
+  temperature, wind speed, and precipitation units.
+- Reload failed forecast requests from the error state.
+- Use the app across desktop, mobile, and narrow mobile layouts with visible
+  hover and focus states.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Links
 
-Note: This will impact Vite dev & build performances.
+- Challenge URL:
+  [Frontend Mentor Weather app](https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49)
+- Live Site URL: Not configured in this repository yet.
+- Solution URL: Not submitted on Frontend Mentor yet.
 
-## Expanding the ESLint configuration
+## Built With
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS 4
+- TanStack Query
+- Radix UI dropdown primitives
+- `nuqs` for URL-backed application state
+- Open-Meteo forecast and geocoding APIs
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## API Usage
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+The app calls Open-Meteo directly from the browser and does not require an API
+key.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Forecast data is requested from `https://api.open-meteo.com/v1/forecast`.
+- Location search is requested from
+  `https://geocoding-api.open-meteo.com/v1/search`.
+- Forecast requests include current weather, hourly temperature and weather
+  codes, and 7 daily forecast rows.
+- Unit selections are sent through Open-Meteo query parameters:
+  `temperature_unit`, `wind_speed_unit`, and `precipitation_unit`.
+
+## Notable Decisions
+
+- Location, unit preferences, and selected hourly day are stored in the URL so
+  the chosen state can survive reloads and be shared.
+- TanStack Query keeps the last successful forecast visible while new searches
+  or unit changes are fetching.
+- The app preserves a stale forecast with a retry notice when a later forecast
+  request fails, and shows a full-page error only when no forecast is available.
+- Browser geolocation is attempted only when the URL does not already contain a
+  valid selected location.
+- Berlin is the explicit fallback location for denied or unavailable
+  geolocation.
+
+## Running Locally
+
+Install dependencies:
+
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Start the development server:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm dev
 ```
+
+Run verification checks:
+
+```bash
+pnpm lint
+pnpm build
+```
+
+Preview the production build:
+
+```bash
+pnpm preview
+```
+
+## Known Limitations
+
+- The repository does not currently include a configured production deployment
+  URL or submitted Frontend Mentor solution URL.
+- Weather data depends on Open-Meteo availability and the browser's network
+  access.
+- Browser geolocation depends on user permission and browser support.
+
+## Author
+
+- Samwel Omwenga
+- Frontend Mentor profile: not provided in this repository.
