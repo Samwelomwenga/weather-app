@@ -1,3 +1,5 @@
+import { UTCDate } from "@date-fns/utc"
+import { format } from "date-fns"
 import drizzleIcon from "@/assets/images/icon-drizzle.webp"
 import fogIcon from "@/assets/images/icon-fog.webp"
 import overcastIcon from "@/assets/images/icon-overcast.webp"
@@ -92,55 +94,32 @@ export function formatMeasurement(value: number, unit: string) {
 }
 
 export function formatForecastDate(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-    weekday: "long",
-    year: "numeric",
-  }).format(parseOpenMeteoLocalTime(value))
-}
-
-export function formatForecastDay(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    timeZone: "UTC",
-    weekday: "long",
-  }).format(parseOpenMeteoLocalTime(value))
+  return format(toForecastDate(value), "EEEE, MMM d, yyyy")
 }
 
 export function formatForecastDayOption(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-    weekday: "short",
-  }).format(parseOpenMeteoLocalTime(value))
+  return format(toForecastDate(value), "EEE, MMM d")
 }
 
 export function formatForecastShortDay(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    timeZone: "UTC",
-    weekday: "short",
-  }).format(parseOpenMeteoLocalTime(value))
+  return format(toForecastDate(value), "EEE")
 }
 
 export function formatForecastHour(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    hour: "numeric",
-    timeZone: "UTC",
-  }).format(parseOpenMeteoLocalTime(value))
+  return format(toForecastDate(value), "h a")
 }
 
-function parseOpenMeteoLocalTime(value: string) {
-  const [date = "", time = "00:00"] = value.split("T")
-  const [year = "0", month = "1", day = "1"] = date.split("-")
-  const [hour = "0", minute = "0"] = time.split(":")
+/**
+ * Open-Meteo returns timestamps already shifted into the requested location's
+ * time zone, with no offset suffix ("2026-08-16T14:00" or "2026-08-16"). Those
+ * are anchored to UTC so the wall-clock reading is displayed verbatim: a
+ * `UTCDate` keeps date-fns out of the browser's time zone, which would
+ * otherwise shift labels across a local DST transition.
+ */
+function toForecastDate(value: string) {
+  const timestamp = value.includes("T")
+    ? `${value}Z`
+    : `${value}T00:00:00Z`
 
-  return new Date(Date.UTC(
-    Number(year),
-    Number(month) - 1,
-    Number(day),
-    Number(hour),
-    Number(minute),
-  ))
+  return new UTCDate(timestamp)
 }
