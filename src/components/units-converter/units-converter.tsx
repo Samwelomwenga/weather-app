@@ -9,55 +9,38 @@ import iconUnits from "@/assets/images/icon-units.svg"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { UnitGroup } from "@/components/units-converter/unit-group"
+import {
+  precipitationOptions,
+  temperatureOptions,
+  windSpeedOptions,
+} from "@/components/units-converter/unit-options"
 import {
   areUnitPreferencesEqual,
   metricUnitPreferences,
 } from "@/lib/units"
 
-const temperatureOptions = [
-  { label: "Celsius (°C)", value: "celsius" },
-  { label: "Fahrenheit (°F)", value: "fahrenheit" },
-] satisfies UnitOption<TemperatureUnit>[]
-
-const windSpeedOptions = [
-  { label: "km/h", value: "kmh" },
-  { label: "mph", value: "mph" },
-] satisfies UnitOption<WindSpeedUnit>[]
-
-const precipitationOptions = [
-  { label: "Millimeters (mm)", value: "mm" },
-  { label: "Inches (in)", value: "inch" },
-] satisfies UnitOption<PrecipitationUnit>[]
-
 type UnitsConverterProps = {
-  unitPreferences: UnitPreferences
+  setImperialUnits: () => void
+  setMetricUnits: () => void
+  setPrecipitationUnit: (value: PrecipitationUnit) => void
   setTemperatureUnit: (value: TemperatureUnit) => void
   setWindSpeedUnit: (value: WindSpeedUnit) => void
-  setPrecipitationUnit: (value: PrecipitationUnit) => void
-  setMetricUnits: () => void
-  setImperialUnits: () => void
-}
-
-type UnitOption<TValue extends string> = {
-  label: string
-  value: TValue
+  unitPreferences: UnitPreferences
 }
 
 export function UnitsConverter({
-  unitPreferences,
+  setImperialUnits,
+  setMetricUnits,
+  setPrecipitationUnit,
   setTemperatureUnit,
   setWindSpeedUnit,
-  setPrecipitationUnit,
-  setMetricUnits,
-  setImperialUnits,
+  unitPreferences,
 }: UnitsConverterProps) {
   const isMetricPreset = areUnitPreferencesEqual(
     unitPreferences,
@@ -81,10 +64,14 @@ export function UnitsConverter({
           <img src={iconDropdown} alt="" className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[13.5rem] rounded-lg border-border bg-popover p-2 shadow-xl">
+      <DropdownMenuContent
+        align="end"
+        className="w-[13.5rem] rounded-lg border-border bg-popover p-2 shadow-xl"
+      >
         <DropdownMenuItem
           className="min-h-10 cursor-pointer rounded-lg px-3 text-base font-semibold focus:bg-secondary focus:text-foreground data-[highlighted]:bg-secondary data-[highlighted]:text-foreground"
           onSelect={(event) => {
+            // Keep the menu open so several units can be changed in one visit.
             event.preventDefault()
             applyPreset()
           }}
@@ -94,59 +81,25 @@ export function UnitsConverter({
         <DropdownMenuSeparator className="my-2" />
         <UnitGroup
           label="Temperature"
-          value={unitPreferences.temperatureUnit}
           options={temperatureOptions}
+          value={unitPreferences.temperatureUnit}
           onValueChange={setTemperatureUnit}
         />
         <DropdownMenuSeparator className="my-2" />
         <UnitGroup
           label="Wind Speed"
-          value={unitPreferences.windSpeedUnit}
           options={windSpeedOptions}
+          value={unitPreferences.windSpeedUnit}
           onValueChange={setWindSpeedUnit}
         />
         <DropdownMenuSeparator className="my-2" />
         <UnitGroup
           label="Precipitation"
-          value={unitPreferences.precipitationUnit}
           options={precipitationOptions}
+          value={unitPreferences.precipitationUnit}
           onValueChange={setPrecipitationUnit}
         />
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-}
-
-type UnitGroupProps<TValue extends string> = {
-  label: string
-  value: TValue
-  options: UnitOption<TValue>[]
-  onValueChange: (value: TValue) => void
-}
-
-function UnitGroup<TValue extends string>({
-  label,
-  value,
-  options,
-  onValueChange,
-}: UnitGroupProps<TValue>) {
-  return (
-    <DropdownMenuGroup>
-      <DropdownMenuLabel className="px-3 text-sm text-muted-foreground">
-        {label}
-      </DropdownMenuLabel>
-      {options.map(option => (
-        <DropdownMenuCheckboxItem
-          key={option.value}
-          textValue={option.label}
-          checked={option.value === value}
-          className="min-h-10 cursor-pointer rounded-lg text-base focus:bg-secondary focus:text-foreground data-[highlighted]:bg-secondary data-[highlighted]:text-foreground data-[state=checked]:bg-secondary"
-          onCheckedChange={() => onValueChange(option.value)}
-          onSelect={event => event.preventDefault()}
-        >
-          {option.label}
-        </DropdownMenuCheckboxItem>
-      ))}
-    </DropdownMenuGroup>
   )
 }

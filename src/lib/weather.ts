@@ -12,6 +12,9 @@ type WeatherSummary = {
   icon: string
 }
 
+/** Used until the API reports the unit it actually returned readings in. */
+export const DEFAULT_TEMPERATURE_UNIT = "°C"
+
 const weatherIconGroups = [
   {
     codes: [0],

@@ -5,18 +5,18 @@ import {
 } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { NuqsAdapter } from "nuqs/adapters/react"
-import { useState } from "react"
 
-export default function Provider({ children }: PropsWithChildren) {
-  const [queryClient] = useState(() => new QueryClient())
+const queryClient = new QueryClient()
 
+/** App-wide providers. */
+export function AppProviders({ children }: PropsWithChildren) {
   return (
     <NuqsAdapter>
       <QueryClientProvider client={queryClient}>
         {children}
-        {import.meta.env.DEV && (
-          <ReactQueryDevtools initialIsOpen={false} />
-        )}
+
+        <ReactQueryDevtools initialIsOpen={false} />
+
       </QueryClientProvider>
     </NuqsAdapter>
   )
