@@ -5,7 +5,6 @@ import type {
   SuccessfulApiResponse,
 } from "@/types/api-response"
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useMemo } from "react"
 import { queryKeys } from "@/constants/query-keys"
 
 export type WeatherForecastResult = {
@@ -59,23 +58,13 @@ export function useFetchWeatherForecast(
     temperatureUnit,
     windSpeedUnit,
   } = unitPreferences
-  const params = useMemo(
-    () => (
-      location
-        ? buildWeatherForecastParams(location, {
-            precipitationUnit,
-            temperatureUnit,
-            windSpeedUnit,
-          })
-        : null
-    ),
-    [
-      location,
-      precipitationUnit,
-      temperatureUnit,
-      windSpeedUnit,
-    ],
-  )
+  const params = location
+    ? buildWeatherForecastParams(location, {
+        precipitationUnit,
+        temperatureUnit,
+        windSpeedUnit,
+      })
+    : null
 
   return useQuery<WeatherForecastResult, Error>({
     queryKey: [...queryKeys.forecast, params, location],

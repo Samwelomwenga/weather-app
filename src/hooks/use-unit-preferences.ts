@@ -9,7 +9,6 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from "nuqs"
-import { useCallback } from "react"
 import {
   imperialUnitPreferences,
   metricUnitPreferences,
@@ -45,30 +44,21 @@ export function useUnitPreferences() {
       urlKeys: unitPreferenceUrlKeys,
     },
   )
-  const setTemperatureUnit = useCallback(
-    (temperatureUnit: TemperatureUnit) => {
-      void setUnitPreferences({ temperatureUnit })
-    },
-    [setUnitPreferences],
-  )
-  const setWindSpeedUnit = useCallback(
-    (windSpeedUnit: WindSpeedUnit) => {
-      void setUnitPreferences({ windSpeedUnit })
-    },
-    [setUnitPreferences],
-  )
-  const setPrecipitationUnit = useCallback(
-    (precipitationUnit: PrecipitationUnit) => {
-      void setUnitPreferences({ precipitationUnit })
-    },
-    [setUnitPreferences],
-  )
-  const setMetricUnits = useCallback(() => {
+  const setTemperatureUnit = (temperatureUnit: TemperatureUnit) => {
+    void setUnitPreferences({ temperatureUnit })
+  }
+  const setWindSpeedUnit = (windSpeedUnit: WindSpeedUnit) => {
+    void setUnitPreferences({ windSpeedUnit })
+  }
+  const setPrecipitationUnit = (precipitationUnit: PrecipitationUnit) => {
+    void setUnitPreferences({ precipitationUnit })
+  }
+  const setMetricUnits = () => {
     void setUnitPreferences(metricUnitPreferences)
-  }, [setUnitPreferences])
-  const setImperialUnits = useCallback(() => {
+  }
+  const setImperialUnits = () => {
     void setUnitPreferences(imperialUnitPreferences)
-  }, [setUnitPreferences])
+  }
 
   return {
     unitPreferences: toUnitPreferences(unitPreferences),
