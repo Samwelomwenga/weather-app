@@ -80,11 +80,19 @@ export function formatTemperature(value: number, unit: string) {
   return `${rounded} ${unit}`
 }
 
+/**
+ * Precision per unit. Precipitation is reported as an hourly accumulation, so
+ * whole-number rounding would erase light rain (0.1–1 mm/h) entirely.
+ */
+const measurementDecimals: Record<string, number> = {
+  inch: 2,
+  mm: 1,
+}
+
 export function formatMeasurement(value: number, unit: string) {
   const label = unit === "inch" ? "in" : unit
-  const rounded = unit === "inch"
-    ? Math.round(value * 100) / 100
-    : Math.round(value)
+  const factor = 10 ** (measurementDecimals[unit] ?? 0)
+  const rounded = Math.round(value * factor) / factor
 
   if (unit === "%") {
     return `${rounded}%`
