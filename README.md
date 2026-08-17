@@ -28,7 +28,8 @@ Users can:
 
 - Challenge URL:
   [Frontend Mentor Weather app](https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49)
-- Live Site URL: Not configured in this repository yet.
+- Repository URL: https://github.com/Samwelomwenga/weather-app
+- Live Site URL: https://weather-app-chi-plum-29.vercel.app/
 - Solution URL: Not submitted on Frontend Mentor yet.
 
 ## Built With
@@ -54,19 +55,6 @@ key.
   codes, and 7 daily forecast rows.
 - Unit selections are sent through Open-Meteo query parameters:
   `temperature_unit`, `wind_speed_unit`, and `precipitation_unit`.
-
-## Notable Decisions
-
-- Location, unit preferences, and selected hourly day are stored in the URL so
-  the chosen state can survive reloads and be shared.
-- TanStack Query keeps the last successful forecast visible while new searches
-  or unit changes are fetching.
-- The app preserves a stale forecast with a retry notice when a later forecast
-  request fails, and shows a full-page error only when no forecast is available.
-- Browser geolocation is attempted only when the URL does not already contain a
-  valid selected location.
-- Berlin is the explicit fallback location for denied or unavailable
-  geolocation.
 
 ## Running Locally
 
@@ -94,16 +82,3 @@ Preview the production build:
 ```bash
 pnpm preview
 ```
-
-## Known Limitations
-
-- The repository does not currently include a configured production deployment
-  URL or submitted Frontend Mentor solution URL.
-- Weather data depends on Open-Meteo availability and the browser's network
-  access.
-- Browser geolocation depends on user permission and browser support.
-
-## Author
-
-- Samwel Omwenga
-- Frontend Mentor profile: not provided in this repository.
